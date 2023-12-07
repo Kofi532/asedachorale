@@ -737,7 +737,7 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt  # Only for demonstration purposes, not recommended for production
 def handle_click(request):
     lists = list(range(1, 1001))
-    directory = r"adom\templates\lyrics"
+    directory = r"lyrics"
     kpo = []
 
     with os.scandir(directory) as entries:
@@ -808,7 +808,7 @@ def search_hymn(request):
         print(text_input_value)
         
 
-        directory_path = r"adom\templates\lyrics"
+        directory_path = r"lyrics"
 
         # Initialize an empty list to store file names
         kpo = []
@@ -914,7 +914,7 @@ def music_view(request):
     print('Don')
     print(clicked_value) 
     # path = f"C:\\Users\\KOFI ADUKPO\\Downloads\\tunes\\{clicked_value}.xml"
-    path = f"adom\\templates\\tunes\\{clicked_value}.xml"
+    path = f"tunes\\{clicked_value}.xml"
 
     score = music21.converter.parse(path)
     # C:\Users\KOFI ADUKPO\Downloads\solfa
@@ -1274,7 +1274,7 @@ def music_view(request):
     clicked_value = request.session.get('clicked_value', None)
     print('Don')
     print(clicked_value)
-    path = f"adom\\templates\\tunes\\{clicked_value}.xml"
+    path = f"tunes\\{clicked_value}.xml"
     score = music21.converter.parse(path)
     # C:\Users\KOFI ADUKPO\Downloads\solfa
     # score = music21.converter.parse(path)

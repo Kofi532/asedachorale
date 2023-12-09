@@ -10,5 +10,6 @@ urlpatterns = [
     path('', views.handle_click, name='handle_click'),  # Maps /handle-click/ to handle_click view
     path('previous/', views.previous_view, name='previous_view'),
     path('search/', views.search_hymn, name='search_hymn'),
-
-]
+    path('play-music/', views.play_midi, name='play_music'),
+    path('download-midi/', views.download_midi, name='download_midi'),
+    ]

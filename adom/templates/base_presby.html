@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> d64141e793585eba81673de8af9f37b259e7a589
 {% extends 'jot.html' %}
 {% block content %}
 <br>
@@ -14,13 +17,18 @@
         .btn-table {
             display: grid;
             grid-template-columns: repeat(10, 1fr); /* 10 columns for the table */
+<<<<<<< HEAD
             gap: 10px; /* Increased gap for better spacing */
+=======
+            gap: 5px;
+>>>>>>> d64141e793585eba81673de8af9f37b259e7a589
         }
         .btn-table .btn {
             width: 100%;
         }
 
         /* Media queries for different screen sizes */
+<<<<<<< HEAD
         @media (max-width: 768px) {
             .btn-table {
                 grid-template-columns: repeat(5, 1fr); /* 5 columns for the table on smaller screens */
@@ -36,11 +44,18 @@
             }
             .btn-table .btn {
                 font-size: 12px;
+=======
+        @media (max-width: 576px) {
+            .btn-table .btn {
+                width: 100%;
+                font-size: 14px;
+>>>>>>> d64141e793585eba81673de8af9f37b259e7a589
             }
         }
 
         @media (max-width: 400px) {
             .btn-table {
+<<<<<<< HEAD
                 grid-template-columns: repeat(2, 1fr); /* 2 columns for the table on extra small screens */
             }
             .btn-table .btn {
@@ -58,10 +73,15 @@
 
         .lead, p {
             margin-bottom: 15px;
+=======
+                grid-template-columns: repeat(5, 1fr); /* 5 columns for the table on smaller screens */
+            }
+>>>>>>> d64141e793585eba81673de8af9f37b259e7a589
         }
     </style>
 </head>
 <body>
+<<<<<<< HEAD
     <div class="container content-container"> 
         <p class="lead">P. H. B</p>
         <p>Click your hymn number.</p>
@@ -81,11 +101,24 @@
                 <form method="post" action="{% url 'handle_click_presby' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary hymn-btn" name="num" value="{{ i }}">{{ i }}</button>
+=======
+    <div class="container"> 
+        <p class="lead">Presbyterian Hymn Book.</p>
+        <p>Click your hymn number.</p>
+        <p>To search hymn with text of the first line, click <a href="/search_presby/">here.</a> </p>        <div class="btn-table">
+            <!-- Generating a table of clickable buttons for numbers 1 to 1000 -->
+            
+            {% for i in lists %}
+                <form method="post" action="{% url 'handle_click_presby' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary" name="num" value="{{ i }}">{{ i }}</button>
+>>>>>>> d64141e793585eba81673de8af9f37b259e7a589
                 </form>
             {% endfor %}
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -111,3 +144,10 @@
 </body>
 </html>
 {% endblock %}
+=======
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+{% endblock %}
+>>>>>>> d64141e793585eba81673de8af9f37b259e7a589

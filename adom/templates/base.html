@@ -61,6 +61,7 @@
     </style>
 </head>
 <body>
+<<<<<<< HEAD
     <div class="container content-container"> 
         <p class="lead">Publisher: Methodist Conference Office, London, 1933.</p>
         <p>Click your hymn number.</p>
@@ -75,6 +76,12 @@
         </div>
 
         <div class="btn-table" id="hymnTable">
+=======
+    <div class="container"> 
+        <p class="lead">Publisher: Methodist Conference Office, London, 1933.</p>
+        <p>Click your hymn number.</p>
+        <p>To search hymn with text of the first line, click <a href="/search/">here.</a> </p>        <div class="btn-table">
+>>>>>>> d64141e793585eba81673de8af9f37b259e7a589
             <!-- Generating a table of clickable buttons for numbers 1 to 1000 -->
             {% for i in lists %}
                 <form method="post" action="{% url 'handle_click' %}">

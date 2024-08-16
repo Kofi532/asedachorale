@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Display Notes</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .dropdown-menu {
+            min-width: 0;
+        }
+        .display-notes .row {
+            display: flex;
+            flex-wrap: nowrap;
+            margin-bottom: 10px;
+        }
+        .display-notes .col {
+            flex: 1;
+            text-align: center;
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Musical Notes</h1>
+        <form id="notesForm">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Voice Part</th>
+                            {% for i in notes_range %}
+                                <th scope="col">Note {{ i }}</th>
+                                <th scope="col">Low</th>
+                                <th scope="col">High</th>
+                                <th scope="col">Duration {{ i }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for voice, notes in voice_parts.items %}
+                        <tr>
+                            <th scope="row">{{ voice }}</th>
+                            {% for note in notes %}
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonNote{{ forloop.parentloop.counter }}_{{ forloop.counter }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            None
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonNote{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                            <a class="dropdown-item" href="#" onclick="updateDropdown(this)">None</a>
+                                            {% for option in note_options %}
+                                                <a class="dropdown-item" href="#" onclick="updateDropdown(this)">{{ option }}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="low" id="checkboxLow{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                        <label class="form-check-label" for="checkboxLow{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                            Low
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="high" id="checkboxHigh{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                        <label class="form-check-label" for="checkboxHigh{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                            High
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonDuration{{ forloop.parentloop.counter }}_{{ forloop.counter }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            None
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonDuration{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                            <a class="dropdown-item" href="#" onclick="updateDropdown(this)">None</a>
+                                            {% for duration in duration_options %}
+                                                <a class="dropdown-item" href="#" onclick="updateDropdown(this)">{{ duration }}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="buttons">
+                <button type="button" class="btn btn-primary mt-3" onclick="submitForm()">Submit</button>
+                <button type="button" class="btn btn-secondary mt-3 ml-3" onclick="editForm()">Edit</button>
+            </div>
+        </form>
+        <div id="displayNotes" class="display-notes mt-5"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function updateDropdown(element) {
+            var button = element.closest('.dropdown').querySelector('.dropdown-toggle');
+            button.textContent = element.textContent;
+        }
+
+        function submitForm() {
+            var form = document.getElementById('notesForm');
+            var displayNotes = document.getElementById('displayNotes');
+            var rows = form.querySelectorAll('tbody tr');
+            displayNotes.innerHTML = ''; // Clear previous results
+            
+            rows.forEach(function(row) {
+                var voicePart = row.querySelector('th').textContent;
+                var rowValues = [voicePart];
+                var noteDropdowns = row.querySelectorAll('.dropdown-toggle');
+                var lowCheckboxes = row.querySelectorAll('.form-check-input[value="low"]');
+                var highCheckboxes = row.querySelectorAll('.form-check-input[value="high"]');
+
+                noteDropdowns.forEach(function(dropdown, index) {
+                    var value = dropdown.textContent.trim();
+                    // If value is 'None', add an empty string to rowValues
+                    if (value === 'None') {
+                        value = '';
+                    } else {
+                        // Add ',' for low, "'" for high
+                        if (lowCheckboxes[index].checked) {
+                            value += ',';
+                        } else if (highCheckboxes[index].checked) {
+                            value += "'";
+                        }
+                    }
+                    rowValues.push(value);
+                });
+
+                var displayRow = document.createElement('div');
+                displayRow.className = 'row';
+                rowValues.forEach(function(value) {
+                    var col = document.createElement('div');
+                    col.className = 'col';
+                    col.textContent = value;
+                    displayRow.appendChild(col);
+                });
+                displayNotes.appendChild(displayRow);
+            });
+
+            toggleForm(false); // Disable form
+        }
+
+        function editForm() {
+            toggleForm(true); // Enable form for editing
+        }
+
+        function toggleForm(enableEdit) {
+            var form = document.getElementById('notesForm');
+            var buttons = document.getElementById('buttons').querySelectorAll('button');
+            var dropdowns = form.querySelectorAll('.dropdown-toggle');
+            var checkboxes = form.querySelectorAll('.form-check-input');
+
+            dropdowns.forEach(function(dropdown) {
+                dropdown.disabled = !enableEdit;
+            });
+
+            checkboxes.forEach(function(checkbox) {
+                checkbox.disabled = !enableEdit;
+            });
+
+            buttons.forEach(function(button) {
+                if (enableEdit) {
+                    if (button.textContent.trim() === 'Edit') {
+                        button.textContent = 'Submit';
+                        button.classList.remove('btn-secondary');
+                        button.classList.add('btn-primary');
+                    }
+                } else {
+                    button.textContent = 'Edit';
+                    button.classList.remove('btn-primary');
+                    button.classList.add('btn-secondary');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

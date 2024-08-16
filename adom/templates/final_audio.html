@@ -1,0 +1,35 @@
+{% extends 'jot.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <p class="lead">
+                You and {{ people_num }} person(s) joined the group recording for the hymn 
+                <strong class="text-primary">{{ hymn_numberr }}</strong>. 
+                You can let others join with the code 
+                <strong class="text-success">{{ random_wordd }}</strong>.
+            </p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <!-- Audio player for listening to the MP3 file -->
+            <audio controls class="w-100">
+                <source src="{% url 'download_midi_final' %}" type="audio/mp3">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-8 text-center">
+            <!-- Download button for the MP3 file -->
+            <a href="{% url 'download_midi_final' %}" download="kofi.mp3" class="btn btn-primary">
+                Download MP3
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

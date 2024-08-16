@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hymn {{ hymn_number }}</title>
+</head>
+<body>
+    <h1>Hymn {{ hymn_number }} ({{ source }})</h1>
+    <p>{{ hymn_content|linebreaks }}</p>
+    <a href="{% url 'hymn_search' %}">Back to search</a>
+</body>
+</html>

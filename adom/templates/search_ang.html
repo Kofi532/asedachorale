@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Form</title>
+</head>
+<body>
+    <h1>Select Key, Solfa Notes, and Durations</h1>
+    <form id="musicForm" onsubmit="displaySelectedValues(event)">
+        <label for="key">Key:</label>
+        <select name="key" id="key">
+            <option value="G">G Major</option>
+            <!-- Add more keys if needed -->
+        </select>
+        <br><br>
+        
+        <div id="solfaNotesContainer">
+            <h2>Solfa Notes and Durations</h2>
+            <!-- Repeat this block 5 times for 5 sets of solfa notes and durations -->
+            <div class="solfaNoteBlock">
+                <label for="solfa_1">Solfa Note:</label>
+                <select name="solfa_1" id="solfa_1">
+                    <option value="d">Doh</option>
+                    <option value="r">Re</option>
+                    <option value="m">Mi</option>
+                    <option value="f">Fa</option>
+                    <option value="s">Sol</option>
+                    <option value="l">La</option>
+                    <option value="t">Ti</option>
+                    <option value="<d">Low Doh</option>
+                    <option value="<r">Low Re</option>
+                    <option value="<m">Low Mi</option>
+                    <option value="<f">Low Fa</option>
+                    <option value="<s">Low Sol</option>
+                    <option value="<l">Low La</option>
+                    <option value="<t">Low Ti</option>
+                    <option value="d>">High Doh</option>
+                    <option value="r>">High Re</option>
+                    <option value="m>">High Mi</option>
+                    <option value="f>">High Fa</option>
+                    <option value="s>">High Sol</option>
+                    <option value="l>">High La</option>
+                    <option value="t>">High Ti</option>
+                </select>
+                <label for="duration_1">Duration:</label>
+                <select name="duration_1" id="duration_1">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <!-- Add more durations if needed -->
+                </select>
+                <br><br>
+            </div>
+            <!-- Repeat the above block 4 more times for 5 sets of solfa notes and durations -->
+        </div>
+        
+        <input type="submit" value="Submit">
+    </form>
+
+    <h2>Selected Values</h2>
+    <p id="selectedValues"></p>
+
+    <script>
+        function displaySelectedValues(event) {
+            event.preventDefault();
+            
+            // Get the selected values
+            const key = document.getElementById('key').value;
+            const solfa = document.getElementById('solfa_1').value;
+            const duration = document.getElementById('duration_1').value;
+            
+            // Display the selected values
+            const selectedValuesElement = document.getElementById('selectedValues');
+            selectedValuesElement.textContent = `Key: ${key}, Solfa Note: ${solfa}, Duration: ${duration}`;
+        }
+    </script>
+</body>
+</html>
+
+
+

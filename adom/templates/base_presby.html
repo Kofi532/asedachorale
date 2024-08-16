@@ -1,0 +1,113 @@
+
+{% extends 'jot.html' %}
+{% block content %}
+<br>
+<br>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Numbers Table</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .btn-table {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr); /* 10 columns for the table */
+            gap: 10px; /* Increased gap for better spacing */
+        }
+        .btn-table .btn {
+            width: 100%;
+        }
+
+        /* Media queries for different screen sizes */
+        @media (max-width: 768px) {
+            .btn-table {
+                grid-template-columns: repeat(5, 1fr); /* 5 columns for the table on smaller screens */
+            }
+            .btn-table .btn {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .btn-table {
+                grid-template-columns: repeat(3, 1fr); /* 3 columns for the table on very small screens */
+            }
+            .btn-table .btn {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .btn-table {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns for the table on extra small screens */
+            }
+            .btn-table .btn {
+                font-size: 10px;
+            }
+        }
+
+        .content-container {
+            background-color: #fdf5e6;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #8d5524;
+            margin-bottom: 20px;
+        }
+
+        .lead, p {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container content-container"> 
+        <p class="lead">P. H. B</p>
+        <p>Click your hymn number.</p>
+        <p>To search hymn with text of the first line, click <a href="/search_presby/">here.</a></p>
+
+        <!-- Search bar -->
+        <div class="input-group mb-4">
+            <input type="number" id="searchInput" class="form-control" placeholder="Enter hymn number">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" onclick="filterHymns()">Search</button>
+            </div>
+        </div>
+
+        <div class="btn-table" id="hymnTable">
+            <!-- Generating a table of clickable buttons for numbers 1 to 1000 -->
+            {% for i in lists %}
+                <form method="post" action="{% url 'handle_click_presby' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary hymn-btn" name="num" value="{{ i }}">{{ i }}</button>
+                </form>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Custom JS for filtering hymns -->
+    <script>
+        function filterHymns() {
+            const searchInput = document.getElementById('searchInput').value;
+            const hymnTable = document.getElementById('hymnTable');
+            const hymnButtons = hymnTable.getElementsByClassName('hymn-btn');
+
+            for (let i = 0; i < hymnButtons.length; i++) {
+                const hymnNumber = hymnButtons[i].value;
+                if (searchInput === '' || hymnNumber.includes(searchInput)) {
+                    hymnButtons[i].parentElement.style.display = '';
+                } else {
+                    hymnButtons[i].parentElement.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

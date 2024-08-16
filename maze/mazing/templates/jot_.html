@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Default Values Table</title>
+    <style>
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .table, .table th, .table td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        .editable {
+            cursor: pointer;
+        }
+        .editable input {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            border: none;
+            text-align: center;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Default Values Table</h2>
+    <table id="editable-table" class="table">
+        <thead>
+            <tr>
+                <th></th> <!-- Empty header for row names -->
+                {% for header in headers %}
+                    <th>{{ header }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row_idx in rows %}
+                <tr>
+                    <td>{{ forloop.counter0 }}</td> <!-- Use row index as the first column -->
+                    {% for cell in row_idx %}
+                        <td class="editable" data-row="{{ forloop.parentloop.counter0 }}" data-col="{{ forloop.counter0 }}">
+                            {{ cell }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cells = document.querySelectorAll('.editable');
+            cells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = this.innerText.trim();
+                    this.innerText = '';
+                    this.appendChild(input);
+                    input.focus();
+                    input.addEventListener('blur', function() {
+                        const row = this.parentNode.getAttribute('data-row');
+                        const col = this.parentNode.getAttribute('data-col');
+                        const newValue = this.value;
+                        this.parentNode.innerText = newValue;
+                        // Send AJAX request to update the value on the server
+                        fetch('/update-cell/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken')
+                            },
+                            body: JSON.stringify({
+                                row: row,
+                                col: col,
+                                value: newValue
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Cell updated successfully:', data);
+                        })
+                        .catch(error => {
+                            console.error('Error updating cell:', error);
+                        });
+                    });
+                });
+            });
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

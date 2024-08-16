@@ -1,0 +1,186 @@
+{% load custom_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .table-wrapper {
+            overflow-x: auto;
+            max-width: 100%;
+        }
+        .result-table {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-5">Note Form</h2>
+        <form id="noteForm">
+            {% csrf_token %}
+            <div class="table-wrapper">
+                <table class="table table-bordered table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Voice</th>
+                            {% for i in "1"|repeat:n %}
+                                <th>Note{{ forloop.counter }}</th>
+                                <th>Octave{{ forloop.counter }}</th>
+                                <th>Flat/Sharp{{ forloop.counter }}</th>
+                                <th>Duration{{ forloop.counter }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset.forms %}
+                            <tr>
+                                <td>{{ forloop.counter0|index_to_voice }}</td>
+                                {% for field in form %}
+                                    <td>{{ field }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-secondary" id="editButton" style="display:none;">Edit</button>
+        </form>
+
+        <div class="result-table table-wrapper" id="resultTableWrapper">
+            <!-- Result table will be inserted here -->
+        </div>
+        <button type="button" class="btn btn-success mt-3" id="finalSubmitButton" style="display:none;">Final Submit</button>
+        <button type="button" class="btn btn-info mt-3" id="resetButton" style="display:none;">Reset Form</button>
+    </div>
+
+    <script>
+        document.getElementById('noteForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const resultTableWrapper = document.getElementById('resultTableWrapper');
+            const n = {{ n }}; // Number of columns
+
+            let resultHTML = `
+                <table class="table table-bordered table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Voice</th>`;
+            for (let i = 1; i <= n; i++) {
+                resultHTML += `
+                            <th>Note${i}</th>
+                            <th>Octave${i}</th>
+                            <th>Flat/Sharp${i}</th>
+                            <th>Duration${i}</th>`;
+            }
+            resultHTML += `
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            const voiceLabels = ["Soprano", "Alto", "Tenor", "Bass"];
+            const rows = form.querySelectorAll('tbody tr');
+            rows.forEach((row, rowIndex) => {
+                resultHTML += `<tr><td>${voiceLabels[rowIndex]}</td>`;
+                const fields = row.querySelectorAll('select');
+                fields.forEach((field) => {
+                    resultHTML += `<td>${field.value}</td>`;
+                });
+                resultHTML += `</tr>`;
+            });
+
+            resultHTML += `
+                    </tbody>
+                </table>`;
+
+            resultTableWrapper.innerHTML = resultHTML;
+
+            // Disable form fields
+            const selects = form.querySelectorAll('select');
+            selects.forEach(select => select.setAttribute('disabled', 'disabled'));
+
+            // Show the edit and final submit buttons
+            document.getElementById('editButton').style.display = 'inline-block';
+            document.getElementById('finalSubmitButton').style.display = 'inline-block';
+        });
+
+        document.getElementById('editButton').addEventListener('click', function() {
+            const form = document.getElementById('noteForm');
+
+            // Enable form fields
+            const selects = form.querySelectorAll('select');
+            selects.forEach(select => select.removeAttribute('disabled'));
+
+            // Hide the edit and final submit buttons
+            document.getElementById('editButton').style.display = 'none';
+            document.getElementById('finalSubmitButton').style.display = 'none';
+        });
+
+        document.getElementById('finalSubmitButton').addEventListener('click', function() {
+            const form = document.getElementById('noteForm');
+            const formData = new FormData(form);
+            const n = {{ n }}; // Number of columns
+
+            const data = [[], [], [], []]; // Four sublists for Soprano, Alto, Tenor, Bass
+            const rows = form.querySelectorAll('tbody tr');
+            rows.forEach((row, rowIndex) => {
+                const rowData = [];
+                const fields = row.querySelectorAll('select');
+                fields.forEach((field) => {
+                    rowData.push(field.value);
+                });
+                data[rowIndex] = rowData;
+            });
+
+            fetch('{% url "note_form_view" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                alert('Data submitted successfully!');
+                document.getElementById('resetButton').style.display = 'inline-block'; // Show reset button after successful submission
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error submitting data.');
+            });
+        });
+
+        document.getElementById('resetButton').addEventListener('click', function() {
+            const form = document.getElementById('noteForm');
+
+            // Reset form fields
+            form.reset();
+
+            // Clear result table
+            document.getElementById('resultTableWrapper').innerHTML = '';
+
+            // Show the submit button and hide edit, final submit, and reset buttons
+            document.getElementById('editButton').style.display = 'none';
+            document.getElementById('finalSubmitButton').style.display = 'none';
+            document.getElementById('resetButton').style.display = 'none';
+
+            // Enable form fields
+            const selects = form.querySelectorAll('select');
+            selects.forEach(select => select.removeAttribute('disabled'));
+        });
+    </script>
+</body>
+</html>

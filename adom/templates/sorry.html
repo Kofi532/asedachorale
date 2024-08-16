@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ball with Hover Effect</title>
+    <style>
+        .ball {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+    </style>
+</head>
+<body>
+    {% load custom_filters %}
+    {% for i in 0|times:n %}
+    <div class="ball" id="ball{{ i }}"></div>
+    {% endfor %}
+
+    <script>
+        {% for i in 0|times:n %}
+        const ball{{ i }} = document.getElementById('ball{{ i }}');
+
+        ball{{ i }}.addEventListener('mouseover', () => {
+            ball{{ i }}.style.backgroundColor = 'blue';
+            ball{{ i }}.style.transform = 'translate(-50%, -50%) scale(1.2)';
+        });
+
+        ball{{ i }}.addEventListener('mouseout', () => {
+            ball{{ i }}.style.backgroundColor = 'red';
+            ball{{ i }}.style.transform = 'translate(-50%, -50%) scale(1)';
+        });
+        {% endfor %}
+    </script>
+</body>
+</html>
